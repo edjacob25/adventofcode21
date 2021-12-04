@@ -1,6 +1,6 @@
-mod problems;
+use crate::problems::problem3::{part1, part2};
 
-use crate::problems::problem1::{part1, part2};
+mod problems;
 
 fn main() {
     println!("Hello, world!");
