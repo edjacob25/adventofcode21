@@ -27,6 +27,61 @@ pub fn part1() {
     println!("The power consumption is {}", power_consumption);
 }
 
+pub fn part2() {
+    let path = "test_files/3.txt".to_string();
+    let lines = read_file(path);
+    let lines_ref = lines.iter().map(|s| s as &str).collect();
+    let o2_rating = select_string(0, lines_ref, LookingFor::MAX);
+    println!("O2 rating is {}", o2_rating);
+    let lines_ref = lines.iter().map(|s| s as &str).collect();
+    let co2_scrubber = select_string(0, lines_ref, LookingFor::MIN);
+    println!("CO2 rating is {}", co2_scrubber);
+
+    let o2_rating = convert_array_bit_to_int(&convert_binary_string_to_byte_array(o2_rating));
+    let co2_scrubber = convert_array_bit_to_int(&convert_binary_string_to_byte_array(co2_scrubber));
+
+    let life_support = o2_rating * co2_scrubber;
+    println!("Dec 3, part 2");
+    println!("The life support rating is {}", life_support);
+}
+
+fn convert_binary_string_to_byte_array(string: &str) -> Vec<u8> {
+    let mut vec = vec![0; 0];
+    for char in string.as_bytes() {
+        vec.push(char - 48);
+    }
+    vec
+}
+
+fn select_string(index: usize, list: Vec<&str>, looking_for: LookingFor) -> &str {
+    return if list.len() < 2 {
+        &list[0]
+    } else {
+        println!("{:?}", list);
+        let mut counts: HashMap<u8, u32> = HashMap::new();
+        for c in list.iter() {
+            *counts.entry((*c).as_bytes()[index]).or_insert(0) += 1;
+        }
+
+        let common = match looking_for {
+            LookingFor::MAX => {
+                let (max, num) = counts.into_iter()
+                    .max_by_key(|&(_, count)| count).unwrap();
+                if num == (list.len() / 2) as u32 { b'1' } else { max }
+            }
+            LookingFor::MIN => {
+                let (min, num) = counts.into_iter()
+                    .min_by_key(|&(_, count)| count).unwrap();
+                if num as f32 == list.len() as f32 / 2.0 { b'0' } else { min }
+            }
+        };
+
+        let new_list = list.into_iter()
+            .filter(|x| (*x).as_bytes()[index] == common).collect();
+        select_string(index + 1, new_list, looking_for)
+    };
+}
+
 fn create_bit_array(counts: &[u16], len: usize) -> Vec<u8> {
     let mut bit_array = vec![0; counts.len()];
     for (i, count) in counts.iter().enumerate() {
