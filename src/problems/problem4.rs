@@ -12,7 +12,20 @@ struct Position {
 pub fn part1() {
     let path = "test_files/4.txt".to_string();
     let lines = read_file(path);
+    let results = get_list_of_results(lines);
+    let (result, steps) = results.iter().min_by_key(|(_, steps)| *steps).unwrap();
+    println!("The resulting board did {} steps and had a result of {}", steps, result);
+}
 
+pub fn part2() {
+    let path = "test_files/4.txt".to_string();
+    let lines = read_file(path);
+    let results = get_list_of_results(lines);
+    let (result, steps) = results.iter().max_by_key(|(_, steps)| *steps).unwrap();
+    println!("The resulting board did {} steps and had a result of {}", steps, result);
+}
+
+fn get_list_of_results(lines: Vec<String>) -> Vec<(u32, u32)> {
     let first_line = lines.first().unwrap();
     let calling_order = create_calling_order(first_line);
     let mut line_buffer = Vec::new();
@@ -29,12 +42,8 @@ pub fn part1() {
             line_buffer.push(line)
         }
     }
-
-    let (result, steps) = results.iter().min_by_key(|(_, steps)| *steps).unwrap();
-    println!("The resulting board did {} steps and had a result of {}", steps, result);
+    results
 }
-
-pub fn part2() {}
 
 fn create_calling_order(line: &str) -> Vec<u16> {
     line.split(",").map(|x| x.parse::<u16>().unwrap()).collect()
