@@ -51,6 +51,6 @@ pub fn part2() {
         fishes = new_pop;
     }
     let num_of_fish: u64 = fishes.iter().sum();
-    println!("Day 6, part 1");
-    println!("The number of fishes after 80 days is {}", num_of_fish);
+    println!("Day 6, part 2");
+    println!("The number of fishes after 256 days is {}", num_of_fish);
 }
