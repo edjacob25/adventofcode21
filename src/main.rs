@@ -1,4 +1,5 @@
-use crate::problems::problem3::{part1, part2};
+#![allow(dead_code)]
+use crate::problems::problem5::{part1, part2};
 
 mod problems;
 
