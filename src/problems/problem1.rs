@@ -1,6 +1,6 @@
 use super::common::read_file;
 
-pub fn part1() {
+pub fn part1() -> u16 {
     let path = "test_files/1.txt".to_string();
     let lines = read_file(path);
     let mut last = u32::MAX;
@@ -12,11 +12,10 @@ pub fn part1() {
         }
         last = num;
     }
-    println!("Dec 1");
-    println!("The number of increments is {}", counter);
+    counter
 }
 
-pub fn part2() {
+pub fn part2() -> u16 {
     let path = "test_files/1.txt".to_string();
     let lines = read_file(path);
     let mut counter: u16 = 0;
@@ -33,6 +32,5 @@ pub fn part2() {
             counter += 1;
         }
     }
-    println!("Dec 1 Part 2");
-    println!("The number of increments is {}", counter);
+    counter
 }

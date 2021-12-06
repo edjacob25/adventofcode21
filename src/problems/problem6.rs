@@ -1,6 +1,6 @@
 use super::common::read_file;
 
-pub fn part1() {
+pub fn part1() -> usize {
     let path = "test_files/6.txt".to_string();
     let lines = read_file(path);
     let mut fishes: Vec<u8> = lines[0]
@@ -21,11 +21,10 @@ pub fn part1() {
     }
 
     let num_of_fish = fishes.len();
-    println!("Day 6, part 1");
-    println!("The number of fishes after 80 days is {}", num_of_fish);
+    num_of_fish
 }
 
-pub fn part2() {
+pub fn part2() -> u64 {
     let path = "test_files/6.txt".to_string();
     let lines = read_file(path);
     let mut fishes: Vec<u64> = vec![0; 9];
@@ -51,6 +50,5 @@ pub fn part2() {
         fishes = new_pop;
     }
     let num_of_fish: u64 = fishes.iter().sum();
-    println!("Day 6, part 2");
-    println!("The number of fishes after 256 days is {}", num_of_fish);
+    num_of_fish
 }

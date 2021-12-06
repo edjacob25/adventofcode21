@@ -2,15 +2,15 @@ use std::collections::HashMap;
 
 use super::common::read_file;
 
-pub fn part1() {
-    do_work(&Mode::Problem1);
+pub fn part1() -> u32 {
+    do_work(&Mode::Problem1)
 }
 
-pub fn part2() {
-    do_work(&Mode::Problem2);
+pub fn part2() -> u32 {
+    do_work(&Mode::Problem2)
 }
 
-fn do_work(mode: &Mode) {
+fn do_work(mode: &Mode) -> u32 {
     let path = "test_files/5.txt".to_string();
     let lines = read_file(path);
 
@@ -29,11 +29,7 @@ fn do_work(mode: &Mode) {
         }
     }
 
-    println!("Day 5");
-    println!(
-        "The number of overlapping points is {}",
-        passed_multiple_times
-    );
+    passed_multiple_times
 }
 
 fn create_line(line: &str, mode: &Mode) -> Vec<(u32, u32)> {

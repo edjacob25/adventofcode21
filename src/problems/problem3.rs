@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use super::common::read_file;
 
-pub fn part1() {
+pub fn part1() -> u32 {
     let path = "test_files/3.txt".to_string();
     let lines = read_file(path);
     let mut counts = vec![0; lines[0].len()];
@@ -15,33 +15,31 @@ pub fn part1() {
         }
     }
     let gamma = create_bit_array(&counts, size);
-    println!("{:?}", gamma);
+    // println!("{:?}", gamma);
     let epsilon = invert_bit_array(&gamma);
     let gamma = convert_array_bit_to_int(&gamma);
     let epsilon = convert_array_bit_to_int(&epsilon);
-    println!("Gamma is {} and epsilon is {}", gamma, epsilon);
+    // println!("Gamma is {} and epsilon is {}", gamma, epsilon);
 
     let power_consumption = gamma * epsilon;
-    println!("Dec 3");
-    println!("The power consumption is {}", power_consumption);
+    power_consumption
 }
 
-pub fn part2() {
+pub fn part2() -> u32 {
     let path = "test_files/3.txt".to_string();
     let lines = read_file(path);
     let lines_ref = lines.iter().map(|s| s as &str).collect();
     let o2_rating = select_string(0, lines_ref, LookingFor::MAX);
-    println!("O2 rating is {}", o2_rating);
+    // println!("O2 rating is {}", o2_rating);
     let lines_ref = lines.iter().map(|s| s as &str).collect();
     let co2_scrubber = select_string(0, lines_ref, LookingFor::MIN);
-    println!("CO2 rating is {}", co2_scrubber);
+    // println!("CO2 rating is {}", co2_scrubber);
 
     let o2_rating = convert_array_bit_to_int(&convert_binary_string_to_byte_array(o2_rating));
     let co2_scrubber = convert_array_bit_to_int(&convert_binary_string_to_byte_array(co2_scrubber));
 
     let life_support = o2_rating * co2_scrubber;
-    println!("Dec 3, part 2");
-    println!("The life support rating is {}", life_support);
+    life_support
 }
 
 fn convert_binary_string_to_byte_array(string: &str) -> Vec<u8> {
@@ -56,7 +54,7 @@ fn select_string(index: usize, list: Vec<&str>, looking_for: LookingFor) -> &str
     return if list.len() < 2 {
         &list[0]
     } else {
-        println!("{:?}", list);
+        // println!("{:?}", list);
         let mut counts: HashMap<u8, u32> = HashMap::new();
         for c in list.iter() {
             *counts.entry((*c).as_bytes()[index]).or_insert(0) += 1;

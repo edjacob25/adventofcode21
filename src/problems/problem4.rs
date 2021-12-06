@@ -9,26 +9,20 @@ struct Position {
     y: u16,
 }
 
-pub fn part1() {
+pub fn part1() -> (u32, u32) {
     let path = "test_files/4.txt".to_string();
     let lines = read_file(path);
     let results = get_list_of_results(lines);
     let (result, steps) = results.iter().min_by_key(|(_, steps)| *steps).unwrap();
-    println!(
-        "The resulting board did {} steps and had a result of {}",
-        steps, result
-    );
+    (*result, *steps)
 }
 
-pub fn part2() {
+pub fn part2() -> (u32, u32) {
     let path = "test_files/4.txt".to_string();
     let lines = read_file(path);
     let results = get_list_of_results(lines);
     let (result, steps) = results.iter().max_by_key(|(_, steps)| *steps).unwrap();
-    println!(
-        "The resulting board did {} steps and had a result of {}",
-        steps, result
-    );
+    (*result, *steps)
 }
 
 fn get_list_of_results(lines: Vec<String>) -> Vec<(u32, u32)> {
@@ -41,7 +35,7 @@ fn get_list_of_results(lines: Vec<String>) -> Vec<(u32, u32)> {
             let (board, size) = create_table(&line_buffer);
             let result = calculate_board_value(&board, &calling_order, size);
 
-            println!("{} steps with value {}", result.1, result.0);
+            //println!("{} steps with value {}", result.1, result.0);
             results.push(result);
             line_buffer = Vec::new();
         } else {
