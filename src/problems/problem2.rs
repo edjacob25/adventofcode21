@@ -9,10 +9,10 @@ pub fn part1() {
         let split: Vec<&str> = line.split_whitespace().collect();
         let quantity = split[1].parse::<u32>().unwrap();
         match split[0] {
-            "forward" => { x += quantity }
-            "up" => { y -= quantity }
-            "down" => { y += quantity }
-            _ => ()
+            "forward" => x += quantity,
+            "up" => y -= quantity,
+            "down" => y += quantity,
+            _ => (),
         }
     }
     let result = x * y;
@@ -34,9 +34,9 @@ pub fn part2() {
                 x += quantity;
                 y += aim * quantity;
             }
-            "up" => { aim -= quantity }
-            "down" => { aim += quantity }
-            _ => ()
+            "up" => aim -= quantity,
+            "down" => aim += quantity,
+            _ => (),
         }
     }
     let result = x * y;

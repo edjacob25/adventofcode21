@@ -21,7 +21,6 @@ pub fn part1() {
     let epsilon = convert_array_bit_to_int(&epsilon);
     println!("Gamma is {} and epsilon is {}", gamma, epsilon);
 
-
     let power_consumption = gamma * epsilon;
     println!("Dec 3");
     println!("The power consumption is {}", power_consumption);
@@ -65,19 +64,27 @@ fn select_string(index: usize, list: Vec<&str>, looking_for: LookingFor) -> &str
 
         let common = match looking_for {
             LookingFor::MAX => {
-                let (max, num) = counts.into_iter()
-                    .max_by_key(|&(_, count)| count).unwrap();
-                if num == (list.len() / 2) as u32 { b'1' } else { max }
+                let (max, num) = counts.into_iter().max_by_key(|&(_, count)| count).unwrap();
+                if num == (list.len() / 2) as u32 {
+                    b'1'
+                } else {
+                    max
+                }
             }
             LookingFor::MIN => {
-                let (min, num) = counts.into_iter()
-                    .min_by_key(|&(_, count)| count).unwrap();
-                if num as f32 == list.len() as f32 / 2.0 { b'0' } else { min }
+                let (min, num) = counts.into_iter().min_by_key(|&(_, count)| count).unwrap();
+                if num as f32 == list.len() as f32 / 2.0 {
+                    b'0'
+                } else {
+                    min
+                }
             }
         };
 
-        let new_list = list.into_iter()
-            .filter(|x| (*x).as_bytes()[index] == common).collect();
+        let new_list = list
+            .into_iter()
+            .filter(|x| (*x).as_bytes()[index] == common)
+            .collect();
         select_string(index + 1, new_list, looking_for)
     };
 }
@@ -103,9 +110,7 @@ fn invert_bit_array(array: &[u8]) -> Vec<u8> {
 
 fn convert_array_bit_to_int(bits: &[u8]) -> u32 {
     bits.iter()
-        .fold(0, |result, &bit| {
-            (result << 1) ^ bit as u32
-        })
+        .fold(0, |result, &bit| (result << 1) ^ bit as u32)
 }
 
 enum LookingFor {

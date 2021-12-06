@@ -14,7 +14,10 @@ pub fn part1() {
     let lines = read_file(path);
     let results = get_list_of_results(lines);
     let (result, steps) = results.iter().min_by_key(|(_, steps)| *steps).unwrap();
-    println!("The resulting board did {} steps and had a result of {}", steps, result);
+    println!(
+        "The resulting board did {} steps and had a result of {}",
+        steps, result
+    );
 }
 
 pub fn part2() {
@@ -22,7 +25,10 @@ pub fn part2() {
     let lines = read_file(path);
     let results = get_list_of_results(lines);
     let (result, steps) = results.iter().max_by_key(|(_, steps)| *steps).unwrap();
-    println!("The resulting board did {} steps and had a result of {}", steps, result);
+    println!(
+        "The resulting board did {} steps and had a result of {}",
+        steps, result
+    );
 }
 
 fn get_list_of_results(lines: Vec<String>) -> Vec<(u32, u32)> {
@@ -53,9 +59,15 @@ fn create_table(lines: &[&str]) -> (Board, u16) {
     let mut result = HashMap::new();
     let mut idx: u16 = 0;
     for line in lines {
-        let exploded: Vec<u16> = line.split_whitespace().map(|x| x.parse::<u16>().unwrap()).collect();
+        let exploded: Vec<u16> = line
+            .split_whitespace()
+            .map(|x| x.parse::<u16>().unwrap())
+            .collect();
         for (i, num) in exploded.iter().enumerate() {
-            result.entry(*num).or_insert(Position { x: idx, y: i as u16 });
+            result.entry(*num).or_insert(Position {
+                x: idx,
+                y: i as u16,
+            });
         }
         idx += 1;
     }
@@ -71,7 +83,7 @@ fn calculate_board_value(board: &Board, calling_order: &[u16], side_size: u16) -
     for number in calling_order {
         let (x, y) = match board.get(number) {
             Some(pos) => (pos.x, pos.y),
-            None => continue
+            None => continue,
         };
         total -= *number as u32;
         xs[x as usize] += 1;
