@@ -1,6 +1,14 @@
 use super::common::read_file;
 
 pub fn part1() -> u32 {
+    common(Mode::First)
+}
+
+pub fn part2() -> u32 {
+    common(Mode::Second)
+}
+
+fn common(mode: Mode) -> u32 {
     let path = "test_files/7.txt".to_string();
     let lines = read_file(path);
     let positions: Vec<u32> = lines[0]
@@ -16,8 +24,7 @@ pub fn part1() -> u32 {
 
     let mut min = u32::MAX;
     for i in mean - window..mean + window + 1 {
-        let res = get_movement_cost(&positions, i);
-        println!("Goal {} with cost {}", i, res);
+        let res = get_movement_cost(&positions, i, &mode);
         if min > res {
             min = res;
         }
@@ -25,16 +32,22 @@ pub fn part1() -> u32 {
     min
 }
 
-pub fn get_movement_cost(positions: &[u32], goal: u32) -> u32 {
+fn get_movement_cost(positions: &[u32], goal: u32, mode: &Mode) -> u32 {
     let mut cost = 0;
     for pos in positions {
-        cost += (*pos as i32 - goal as i32).abs() as u32
+        match mode {
+            Mode::First => cost += (*pos as i32 - goal as i32).abs() as u32,
+            Mode::Second => {
+                let diff = (*pos as i32 - goal as i32).abs() as u32;
+                let partial_cost = (diff * (diff + 1)) / 2;
+                cost += partial_cost
+            }
+        }
     }
     cost
 }
 
-pub fn part2() -> u64 {
-    let path = "test_files/6.txt".to_string();
-    let lines = read_file(path);
-    0
+enum Mode {
+    First,
+    Second,
 }
