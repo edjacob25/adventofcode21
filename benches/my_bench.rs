@@ -31,6 +31,11 @@ fn criterion_benchmark(c: &mut Criterion) {
     day.bench_function("1", |b| b.iter(|| problem6::part1()));
     day.bench_function("2", |b| b.iter(|| problem6::part2()));
     day.finish();
+
+    let mut day = c.benchmark_group("Day 7");
+    day.bench_function("1", |b| b.iter(|| problem7::part1()));
+    day.bench_function("2", |b| b.iter(|| problem7::part2()));
+    day.finish();
 }
 
 criterion_group!(benches, criterion_benchmark);
