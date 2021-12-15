@@ -20,7 +20,7 @@ pub fn part2() -> String {
     print_message(&mut paper)
 }
 
-fn create_paper_and_instructions(lines: &[String]) -> (Vec<Point>, Vec<Fold>){
+fn create_paper_and_instructions(lines: &[String]) -> (Vec<Point>, Vec<Fold>) {
     let mut i = 0;
     let mut points = Vec::new();
     loop {
@@ -28,26 +28,31 @@ fn create_paper_and_instructions(lines: &[String]) -> (Vec<Point>, Vec<Fold>){
         if line.is_empty() {
             break;
         }
-        let nums = line.split(",")
+        let nums = line
+            .split(",")
             .map(|x| x.parse::<u32>().unwrap())
             .collect::<Vec<_>>();
-        let point = Point{x:nums[0], y:nums[1]};
+        let point = Point {
+            x: nums[0],
+            y: nums[1],
+        };
         points.push(point);
 
-        i+=1;
+        i += 1;
     }
 
     let mut folds = Vec::new();
     for j in i + 1..lines.len() {
         let line = lines.get(j).unwrap();
         let parts = line.split("=").collect::<Vec<_>>();
-        let fold = Fold{
+        let fold = Fold {
             value: parts[1].parse::<u32>().unwrap(),
             fold_type: match parts[0].chars().last().unwrap() {
                 'x' => FoldType::Vertical,
                 'y' => FoldType::Horizontal,
                 _ => panic!("Huh?"),
-            }};
+            },
+        };
 
         folds.push(fold);
     }
@@ -55,21 +60,27 @@ fn create_paper_and_instructions(lines: &[String]) -> (Vec<Point>, Vec<Fold>){
 }
 
 fn fold(points: &mut Vec<Point>, fold: &Fold) {
-    let mut new_points = points.iter()
+    let mut new_points = points
+        .iter()
         .filter(|&p| match fold.fold_type {
             FoldType::Horizontal => p.y >= fold.value,
-            FoldType::Vertical => p.x >= fold.value ,
+            FoldType::Vertical => p.x >= fold.value,
         })
-        .map(|p|
-            match fold.fold_type {
-                FoldType::Horizontal => Point{x:p.x, y: 2 * fold.value - p.y },
-                FoldType::Vertical => Point{x: 2 * fold.value - p.x, y: p.y } ,
-            }
-        ).collect::<Vec<_>>();
+        .map(|p| match fold.fold_type {
+            FoldType::Horizontal => Point {
+                x: p.x,
+                y: 2 * fold.value - p.y,
+            },
+            FoldType::Vertical => Point {
+                x: 2 * fold.value - p.x,
+                y: p.y,
+            },
+        })
+        .collect::<Vec<_>>();
 
     points.retain(|p: &Point| match fold.fold_type {
         FoldType::Horizontal => p.y < fold.value,
-        FoldType::Vertical => p.x < fold.value ,
+        FoldType::Vertical => p.x < fold.value,
     });
 
     points.append(&mut new_points);
@@ -77,7 +88,6 @@ fn fold(points: &mut Vec<Point>, fold: &Fold) {
     points.sort();
 
     points.dedup();
-
 }
 
 fn print_message(points: &mut [Point]) -> String {
@@ -112,7 +122,7 @@ impl Debug for Point {
 
 struct Fold {
     value: u32,
-    fold_type: FoldType
+    fold_type: FoldType,
 }
 
 enum FoldType {

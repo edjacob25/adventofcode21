@@ -24,7 +24,7 @@ pub fn part2() -> usize {
 
     let mut pairs = HashMap::new();
     for i in 0..seq.len() - 1 {
-        *pairs.entry((seq[i], seq[i+1])).or_insert(0usize) += 1;
+        *pairs.entry((seq[i], seq[i + 1])).or_insert(0usize) += 1;
     }
 
     let mut individuals = HashMap::new();
@@ -37,11 +37,10 @@ pub fn part2() -> usize {
         step_alt(&mut pairs, &mut individuals, &rules);
     }
 
-
     individuals.values().max().unwrap() - individuals.values().min().unwrap()
 }
 
-fn create_seq_and_rules (lines: &[String]) -> (Vec<char>, HashMap<(char, char), char>){
+fn create_seq_and_rules(lines: &[String]) -> (Vec<char>, HashMap<(char, char), char>) {
     let mut iter = lines.into_iter();
     let pattern = iter.next().unwrap().chars().collect::<Vec<_>>();
     iter.next();
@@ -57,17 +56,19 @@ fn create_seq_and_rules (lines: &[String]) -> (Vec<char>, HashMap<(char, char), 
 fn step(sequence: &mut Vec<char>, rules: &HashMap<(char, char), char>) {
     let mut to_insert = Vec::new();
     for i in 0..sequence.len() - 1 {
-        to_insert.push(*rules
-            .get(&(sequence[i], sequence[i+1]))
-            .unwrap())
+        to_insert.push(*rules.get(&(sequence[i], sequence[i + 1])).unwrap())
     }
 
-    for (i, &c) in to_insert.iter().enumerate(){
-        sequence.insert(i*2+ 1,c);
+    for (i, &c) in to_insert.iter().enumerate() {
+        sequence.insert(i * 2 + 1, c);
     }
 }
 
-fn step_alt(pairs: &mut HashMap<(char, char), usize>, individuals: &mut HashMap<char, usize>, rules: &HashMap<(char, char), char>) {
+fn step_alt(
+    pairs: &mut HashMap<(char, char), usize>,
+    individuals: &mut HashMap<char, usize>,
+    rules: &HashMap<(char, char), char>,
+) {
     let mut to_add = Vec::new();
     let mut to_remove = Vec::new();
 
