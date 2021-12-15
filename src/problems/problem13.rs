@@ -9,10 +9,15 @@ pub fn part1() -> usize {
     paper.len()
 }
 
-pub fn part2() -> usize {
+pub fn part2() -> String {
     let path = "test_files/13.txt".to_string();
     let lines = read_file(path);
-    0
+    let (mut paper, instructions) = create_paper_and_instructions(&lines);
+    for instruction in instructions {
+        fold(&mut paper, &instruction);
+    }
+
+    print_message(&mut paper)
 }
 
 fn create_paper_and_instructions(lines: &[String]) -> (Vec<Point>, Vec<Fold>){
@@ -73,6 +78,24 @@ fn fold(points: &mut Vec<Point>, fold: &Fold) {
 
     points.dedup();
 
+}
+
+fn print_message(points: &mut [Point]) -> String {
+    let width = points.last().unwrap().x;
+    points.sort_by_key(|p| p.y);
+    let height = points.last().unwrap().y;
+    let mut response = vec!['\n'];
+    for i in 0..=height {
+        for j in 0..=width {
+            if points.contains(&Point { x: j, y: i }) {
+                response.push('#')
+            } else {
+                response.push(' ')
+            }
+        }
+        response.push('\n');
+    }
+    response.into_iter().collect()
 }
 
 #[derive(Ord, PartialOrd, Eq, PartialEq)]
