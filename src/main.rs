@@ -1,12 +1,12 @@
 #![allow(dead_code)]
-use crate::problems::problem14::{part1, part2};
+use crate::problems::problem15::{part1, part2};
 
 mod problems;
 
 fn main() {
     println!("Hello, world!");
 
-    let day = 14;
+    let day = 15;
 
     let result = part1();
 
