@@ -13,10 +13,14 @@ pub fn part1() -> f32 {
     a_star_search(&graph, (0, 0), (max_x, max_y))
 }
 
-pub fn part2() -> usize {
+pub fn part2() -> f32 {
     let path = "test_files/15.txt".to_string();
     let lines = read_file(path);
-    0
+    let (mut graph, max_x, max_y) = create_graph(&lines);
+    //println!("{}", graph.len());
+    expand_graph(&mut graph, max_x, max_y);
+    //println!("{}", graph.len());
+    a_star_search(&graph, (0, 0), ((max_x + (max_x + 1) * 4) , (max_y + (max_y + 1) * 4)))
 }
 
 fn a_star_search(graph: &HashMap<(isize, isize), Rc<RefCell<Node>>>, start: (isize, isize), end: (isize, isize)) -> f32 {
@@ -47,7 +51,6 @@ fn a_star_search(graph: &HashMap<(isize, isize), Rc<RefCell<Node>>>, start: (isi
             .iter()
             .map(|(x,y)| (current.borrow().pos.0 + x, current.borrow().pos.1 + y))
             .filter(|pos| graph.contains_key(pos) && !closed.contains(pos))
-            //.map(|pos| graph.get_mut(&pos).unwrap())
             .collect::<Vec<_>>();
 
         for pos in neighbors {
@@ -93,6 +96,38 @@ fn create_graph(lines:&[String]) ->(HashMap<(isize, isize), Rc<RefCell<Node>> >,
 
     }
     (graph, x_len, y_len)
+}
+
+fn expand_graph(graph: &mut HashMap<(isize, isize), Rc<RefCell<Node>>>, x_size: isize, y_size: isize) {
+    let keys = graph.keys().map(|(x, y)| (*x, *y)).collect::<Vec<_>>();
+    let mut new_hashmap = HashMap::new();
+    for key in keys {
+        let base= (graph.get(&key).unwrap().borrow() as &RefCell<Node>).borrow().node_value;
+        for j in 0..5 {
+            for i in 0..5 {
+                if i == 0 && j == 0 {
+                    continue
+                }
+                let (x, y) = key;
+                let new_key =  (x + (x_size + 1) * i, y + (y_size + 1) * j);
+                let node_value = base + i as f32 + j as f32;
+                let node_value = if node_value > 9f32 {
+                    (node_value + 1f32) % 10f32
+                } else {
+                    node_value
+                };
+                let value = Node{
+                    node_value ,
+                    acc_cost: f32::MAX,
+                    heuristic: ((i as f32 - x_size as f32).powf(2f32 ) + (j as f32- y_size as f32).powf(2f32)).sqrt(),
+                    best_predecessor: None,
+                    pos: new_key,
+                };
+                new_hashmap.insert(new_key, Rc::new(RefCell::new(value)));
+            }
+        }
+    }
+    graph.extend(new_hashmap.into_iter());
 }
 
 struct Node {
