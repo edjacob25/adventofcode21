@@ -1,5 +1,5 @@
-use criterion::{criterion_group, criterion_main, Criterion};
 use advent2021::problems::*;
+use criterion::{criterion_group, criterion_main, Criterion};
 
 macro_rules! bench_day {
     ($i:ident, $day:literal, $day_path:ident) => {
