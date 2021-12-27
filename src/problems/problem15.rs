@@ -5,7 +5,7 @@ use std::cmp::Ordering;
 use super::common::read_file;
 use std::collections::{BinaryHeap, HashMap, HashSet};
 
-pub fn part1() -> f32 {
+pub fn part1() -> u32 {
     let path = "test_files/15.txt".to_string();
     let lines = read_file(path);
     let (graph, max_x, max_y) = create_graph(&lines);
@@ -13,17 +13,17 @@ pub fn part1() -> f32 {
     a_star_search(&graph, (0, 0), (max_x, max_y))
 }
 
-pub fn part2() -> f32 {
+pub fn part2() -> u32 {
     let path = "test_files/15.txt".to_string();
     let lines = read_file(path);
-    let (mut graph, max_x, max_y) = create_graph(&lines);
+    let (mut graph, mut max_x, mut max_y) = create_graph(&lines);
     //println!("{}", graph.len());
-    expand_graph(&mut graph, max_x, max_y);
+    expand_graph(&mut graph, &mut max_x, &mut max_y);
     //println!("{}", graph.len());
-    a_star_search(&graph, (0, 0), ((max_x + (max_x + 1) * 4) , (max_y + (max_y + 1) * 4)))
+    a_star_search(&graph, (0, 0), (max_x, max_y))
 }
 
-fn a_star_search(graph: &HashMap<(isize, isize), Rc<RefCell<Node>>>, start: (isize, isize), end: (isize, isize)) -> f32 {
+fn a_star_search(graph: &HashMap<(isize, isize), Rc<RefCell<Node>>>, start: (isize, isize), end: (isize, isize)) -> u32 {
 
     let base_neighbors = [(0,1), (1,0), (0,-1), (-1,0)];
 
@@ -35,7 +35,7 @@ fn a_star_search(graph: &HashMap<(isize, isize), Rc<RefCell<Node>>>, start: (isi
 
     let goal =  Rc::clone(graph.get(&end).unwrap());
 
-    start.borrow_mut().acc_cost = 0f32;
+    start.borrow_mut().acc_cost = 0;
 
     open.push(start);
 
@@ -84,10 +84,10 @@ fn create_graph(lines:&[String]) ->(HashMap<(isize, isize), Rc<RefCell<Node>> >,
         let items = line.chars().collect::<Vec<_>>();
         for (j, item) in items.into_iter().enumerate() {
             let node = Node{
-                node_value: item.to_digit(10).unwrap() as f32,
-                acc_cost: f32::MAX,
-                // Using Euclidean distance as heuristic
-                heuristic: ((i as f32 - y_len as f32).powf(2f32 ) + (j as f32- x_len  as f32).powf(2f32)).sqrt(),
+                node_value: item.to_digit(10).unwrap() as u32,
+                acc_cost: u32::MAX,
+                // Using Mannhatan distance as heuristic
+                heuristic: ((y_len - i as isize)+ (x_len - j as isize)) as u32,
                 best_predecessor: None,
                 pos: (j as isize, i as isize),
             };
@@ -98,10 +98,13 @@ fn create_graph(lines:&[String]) ->(HashMap<(isize, isize), Rc<RefCell<Node>> >,
     (graph, x_len, y_len)
 }
 
-fn expand_graph(graph: &mut HashMap<(isize, isize), Rc<RefCell<Node>>>, x_size: isize, y_size: isize) {
-    let keys = graph.keys().map(|(x, y)| (*x, *y)).collect::<Vec<_>>();
+fn expand_graph(graph: &mut HashMap<(isize, isize), Rc<RefCell<Node>>>, x_size: &mut isize, y_size: &mut isize) {
     let mut new_hashmap = HashMap::new();
-    for key in keys {
+    let max_x = *x_size;
+    let max_y = *y_size;
+    *x_size = max_x + (max_x + 1) * 4;
+    *y_size = max_y + (max_y + 1) * 4;
+    for &key in graph.keys() {
         let base= (graph.get(&key).unwrap().borrow() as &RefCell<Node>).borrow().node_value;
         for j in 0..5 {
             for i in 0..5 {
@@ -109,17 +112,17 @@ fn expand_graph(graph: &mut HashMap<(isize, isize), Rc<RefCell<Node>>>, x_size: 
                     continue
                 }
                 let (x, y) = key;
-                let new_key =  (x + (x_size + 1) * i, y + (y_size + 1) * j);
-                let node_value = base + i as f32 + j as f32;
-                let node_value = if node_value > 9f32 {
-                    (node_value + 1f32) % 10f32
+                let new_key =  (x + (max_x + 1) * i, y + (max_y + 1) * j);
+                let node_value = base + i as u32 + j as u32;
+                let node_value = if node_value > 9 {
+                    (node_value + 1) % 10
                 } else {
                     node_value
                 };
                 let value = Node{
-                    node_value ,
-                    acc_cost: f32::MAX,
-                    heuristic: ((i as f32 - x_size as f32).powf(2f32 ) + (j as f32- y_size as f32).powf(2f32)).sqrt(),
+                    node_value,
+                    acc_cost: u32::MAX,
+                    heuristic: ((*y_size - new_key.1 as isize)+ (*x_size - new_key.0 as isize)) as u32,
                     best_predecessor: None,
                     pos: new_key,
                 };
@@ -130,10 +133,11 @@ fn expand_graph(graph: &mut HashMap<(isize, isize), Rc<RefCell<Node>>>, x_size: 
     graph.extend(new_hashmap.into_iter());
 }
 
+#[derive(Debug)]
 struct Node {
-    node_value: f32,
-    acc_cost: f32,
-    heuristic: f32,
+    node_value: u32,
+    acc_cost: u32,
+    heuristic: u32,
     best_predecessor: Option<(isize, isize)>,
     pos: (isize, isize),
 }
@@ -154,8 +158,8 @@ impl PartialOrd<Self> for Node {
 
 impl Ord for Node {
     fn cmp(&self, other: &Self) -> Ordering {
-        if self.acc_cost < other.acc_cost { Ordering::Greater }
-        else if self.acc_cost > other.acc_cost { Ordering::Less }
+        if self.acc_cost + self.heuristic < other.acc_cost + other.heuristic { Ordering::Greater }
+        else if self.acc_cost + self.heuristic> other.acc_cost + other.heuristic { Ordering::Less }
         else { Ordering::Equal }
     }
 
